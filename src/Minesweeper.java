@@ -35,7 +35,6 @@ public class Minesweeper {
     boolean gameOver = false;
 
     Minesweeper() {
-        // frame.setVisible(true);
         frame.setSize(boardWidth, boardHeight);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
@@ -52,7 +51,6 @@ public class Minesweeper {
         frame.add(textPanel, BorderLayout.NORTH);
 
         boardPanel.setLayout(new GridLayout(numRows, numCols)); //8x8
-        // boardPanel.setBackground(Color.green);
         frame.add(boardPanel);
 
         for (int r = 0; r < numRows; r++) {
@@ -63,7 +61,6 @@ public class Minesweeper {
                 tile.setFocusable(false);
                 tile.setMargin(new Insets(0, 0, 0, 0));
                 tile.setFont(new Font("Arial Unicode MS", Font.PLAIN, 45));
-                // tile.setText("💣");
                 tile.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
@@ -108,11 +105,6 @@ public class Minesweeper {
     void setMines() {
         mineList = new ArrayList<MineTile>();
 
-        // mineList.add(board[2][2]);
-        // mineList.add(board[2][3]);
-        // mineList.add(board[5][6]);
-        // mineList.add(board[3][4]);
-        // mineList.add(board[1][1]);
         int mineLeft = mineCount;
         while (mineLeft > 0) {
             int r = random.nextInt(numRows); //0-7
@@ -127,13 +119,13 @@ public class Minesweeper {
     }
 
     void revealMines() {
-        for (int i = 0; i < mineList.size(); i++) {
-            MineTile tile = mineList.get(i);
+        for (MineTile tile : mineList) {
             tile.setText("💣");
         }
 
         gameOver = true;
         textLabel.setText("Game Over!");
+        showEndGamePopup("Game Over!");
     }
 
     void checkMine(int r, int c) {
@@ -166,8 +158,7 @@ public class Minesweeper {
 
         if (minesFound > 0) {
             tile.setText(Integer.toString(minesFound));
-        }
-        else {
+        } else {
             tile.setText("");
             
             //top 3
@@ -188,6 +179,7 @@ public class Minesweeper {
         if (tilesClicked == numRows * numCols - mineList.size()) {
             gameOver = true;
             textLabel.setText("Mines Cleared!");
+            showEndGamePopup("You Win!");
         }
     }
 
@@ -200,5 +192,22 @@ public class Minesweeper {
         }
         return 0;
     }
-}
 
+    void showEndGamePopup(String message) {
+        int option = JOptionPane.showOptionDialog(frame,
+                message + " Do you want to exit or return to the main menu?",
+                "Game Over",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new String[]{"Exit", "Main Menu"},
+                "Exit");
+
+        if (option == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        } else {
+            frame.dispose();
+            new MainMenu();
+        }
+    }
+}
