@@ -15,7 +15,7 @@ public class Minesweeper {
         }
     }
 
-    int tileSize = 70;
+    int tileSize = 50; // Adjusted for better fit on screen
     int numRows;
     int numCols;
     int boardWidth;
@@ -59,22 +59,22 @@ public class Minesweeper {
     }
 
     void setupGame() {
-        frame.setSize(boardWidth, boardHeight + 100);
+        frame.setSize(boardWidth + 20, boardHeight + 100);
         frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
+        frame.setResizable(true); // Allow resizing for better visibility
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-        textLabel.setFont(new Font("Arial", Font.BOLD, 25));
+        textLabel.setFont(new Font("Arial", Font.BOLD, 18)); // Adjusted font size
         textLabel.setHorizontalAlignment(JLabel.CENTER);
-        textLabel.setText("Minesweeper: " + Integer.toString(mineCount));
+        textLabel.setText("Minesweeper: " + mineCount);
         textLabel.setOpaque(true);
 
-        timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 18)); // Adjusted font size
         timerLabel.setHorizontalAlignment(JLabel.CENTER);
         timerLabel.setText("Time Left: 15:00");
 
-        scoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 18)); // Adjusted font size
         scoreLabel.setHorizontalAlignment(JLabel.CENTER);
         scoreLabel.setText("Score: 0");
 
@@ -84,8 +84,8 @@ public class Minesweeper {
         textPanel.add(scoreLabel);
         frame.add(textPanel, BorderLayout.NORTH);
 
-        boardPanel.setLayout(new GridLayout(numRows, numCols)); //8x8
-        frame.add(boardPanel);
+        boardPanel.setLayout(new GridLayout(numRows, numCols)); 
+        frame.add(boardPanel, BorderLayout.CENTER);
 
         for (int r = 0; r < numRows; r++) {
             for (int c = 0; c < numCols; c++) {
@@ -94,7 +94,7 @@ public class Minesweeper {
 
                 tile.setFocusable(false);
                 tile.setMargin(new Insets(0, 0, 0, 0));
-                tile.setFont(new Font("Arial Unicode MS", Font.PLAIN, 45));
+                tile.setFont(new Font("Arial Unicode MS", Font.PLAIN, 20)); // Adjusted font size
                 tile.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
@@ -103,13 +103,11 @@ public class Minesweeper {
                         }
                         MineTile tile = (MineTile) e.getSource();
 
-                        //left click
                         if (e.getButton() == MouseEvent.BUTTON1) {
                             if (tile.getText().equals("🚩")) {
                                 return;
                             }
 
-                            //check if tile clicked contains a mine
                             if (mineList.contains(tile)) {
                                 revealMines();
                             } else {
@@ -154,117 +152,18 @@ public class Minesweeper {
         textPanel.setBackground(darkColor);
         textLabel.setBackground(lightColor);
         textLabel.setForeground(whiteColor);
-
         timerLabel.setBackground(lightColor);
         timerLabel.setForeground(whiteColor);
-
         scoreLabel.setBackground(lightColor);
         scoreLabel.setForeground(whiteColor);
+        boardPanel.setBackground(darkColor);
 
-        for (MineTile[] row : board) {
-            for (MineTile tile : row) {
-                tile.setBackground(lightColor);
-                tile.setForeground(whiteColor);
+        for (Component c : boardPanel.getComponents()) {
+            if (c instanceof JButton) {
+                c.setBackground(darkColor);
+                c.setForeground(whiteColor);
             }
         }
-    }
-
-    void revealMines() {
-        for (MineTile tile : mineList) {
-            tile.setText("💣");
-        }
-
-        gameOver = true;
-        textLabel.setText("Game Over!");
-        if (!isZenMode) {
-            showEndGamePopup("Game Over! Your Score: " + score);
-        } else {
-            showEndGamePopup("Game Over!");
-        }
-    }
-
-    void checkMine(int r, int c) {
-        if (r < 0 || r >= numRows || c < 0 || c >= numCols) {
-            return;
-        }
-
-        MineTile tile = board[r][c];
-        if (!tile.isEnabled()) {
-            return;
-        }
-        tile.setEnabled(false);
-        tilesClicked += 1;
-
-        if (!isZenMode) {
-            score += 200;
-            scoreLabel.setText("Score: " + score);
-        }
-
-        int minesFound = 0;
-
-        //top 3
-        minesFound += countMine(r-1, c-1);  //top left
-        minesFound += countMine(r-1, c);    //top
-        minesFound += countMine(r-1, c+1);  //top right
-
-        //left and right
-        minesFound += countMine(r, c-1);    //left
-        minesFound += countMine(r, c+1);    //right
-
-        //bottom 3
-        minesFound += countMine(r+1, c-1);  //bottom left
-        minesFound += countMine(r+1, c);    //bottom
-        minesFound += countMine(r+1, c+1);  //bottom right
-
-        if (minesFound > 0) {
-            tile.setText(Integer.toString(minesFound));
-        } else {
-            tile.setText("");
-            
-            //top 3
-            checkMine(r-1, c-1);    //top left
-            checkMine(r-1, c);      //top
-            checkMine(r-1, c+1);    //top right
-
-            //left and right
-            checkMine(r, c-1);      //left
-            checkMine(r, c+1);      //right
-
-            //bottom 3
-            checkMine(r+1, c-1);    //bottom left
-            checkMine(r+1, c);      //bottom
-            checkMine(r+1, c+1);    //bottom right
-        }
-
-        if (tilesClicked == numRows * numCols - mineList.size()) {
-            gameOver = true;
-            textLabel.setText("Mines Cleared!");
-            if (!isZenMode) {
-                calculateFinalScore();
-                showEndGamePopup("You Win! Your Score: " + score);
-            } else {
-                showEndGamePopup("You Win!");
-            }
-        }
-    }
-
-    int countMine(int r, int c) {
-        if (r < 0 || r >= numRows || c < 0 || c >= numCols) {
-            return 0;
-        }
-        if (mineList.contains(board[r][c])) {
-            return 1;
-        }
-        return 0;
-    }
-
-    void calculateFinalScore() {
-        for (MineTile tile : mineList) {
-            if (tile.getText().equals("🚩")) {
-                score += 2000;
-            }
-        }
-        scoreLabel.setText("Score: " + score);
     }
 
     void startTimer() {
@@ -287,7 +186,85 @@ public class Minesweeper {
         timer.start();
     }
 
+    void revealMines() {
+        for (MineTile tile : mineList) {
+            tile.setText("💣");
+        }
+
+        gameOver = true;
+        textLabel.setText("Game Over!");
+        showEndGamePopup("Game Over! Your Score: " + score);
+    }
+
+    void checkMine(int r, int c) {
+        if (r < 0 || r >= numRows || c < 0 || c >= numCols) {
+            return;
+        }
+
+        MineTile tile = board[r][c];
+        if (!tile.isEnabled()) {
+            return;
+        }
+
+        tile.setEnabled(false);
+        tilesClicked++;
+        score += 200; // Increment score
+        scoreLabel.setText("Score: " + score); // Update score label
+
+        int minesFound = 0;
+
+        minesFound += countMine(r-1, c-1);
+        minesFound += countMine(r-1, c);
+        minesFound += countMine(r-1, c+1);
+
+        minesFound += countMine(r, c-1);
+        minesFound += countMine(r, c+1);
+
+        minesFound += countMine(r+1, c-1);
+        minesFound += countMine(r+1, c);
+        minesFound += countMine(r+1, c+1);
+
+        if (minesFound > 0) {
+            tile.setText(String.valueOf(minesFound));
+        } else {
+            tile.setText("");
+
+            checkMine(r-1, c-1);
+            checkMine(r-1, c);
+            checkMine(r-1, c+1);
+
+            checkMine(r, c-1);
+            checkMine(r, c+1);
+
+            checkMine(r+1, c-1);
+            checkMine(r+1, c);
+            checkMine(r+1, c+1);
+        }
+
+        if (tilesClicked == numRows * numCols - mineList.size()) {
+            gameOver = true;
+            textLabel.setText("Mines Cleared!");
+            showEndGamePopup("You Win! Your Score: " + score);
+        }
+    }
+
+    int countMine(int r, int c) {
+        if (r < 0 || r >= numRows || c < 0 || c >= numCols) {
+            return 0;
+        }
+        if (mineList.contains(board[r][c])) {
+            return 1;
+        }
+        return 0;
+    }
+
     void showEndGamePopup(String message) {
+        for (MineTile tile : mineList) {
+            if (tile.getText().equals("🚩")) {
+                score += 2000;
+            }
+        }
+
         int option = JOptionPane.showOptionDialog(frame,
                 message + " Do you want to exit or return to the main menu?",
                 "Game Over",
