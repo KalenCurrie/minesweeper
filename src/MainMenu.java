@@ -7,18 +7,19 @@ public class MainMenu {
     private JFrame frame;
     private JCheckBox darkModeCheckBox;
     private JCheckBox zenModeCheckBox;
+    private JCheckBox modifiersCheckBox;
     private JTextField bombCountField;
     private JTextField boardSizeField;
 
     public MainMenu() {
-        frame = new JFrame("Minesweeper Main Menu");
+        frame = new JFrame("MineModder Main Menu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
         frame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        JLabel titleLabel = new JLabel("Minesweeper", JLabel.CENTER);
+        JLabel titleLabel = new JLabel("MineModder", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -36,27 +37,33 @@ public class MainMenu {
         gbc.gridy = 1;
         frame.add(zenModeCheckBox, gbc);
 
-        JLabel bombCountLabel = new JLabel("Number of Bombs (3-100):", JLabel.CENTER);
+        modifiersCheckBox = new JCheckBox("Enable Modifiers");
         gbc.gridx = 0;
         gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        frame.add(modifiersCheckBox, gbc);
+
+        JLabel bombCountLabel = new JLabel("Number of Bombs (3-100):", JLabel.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         frame.add(bombCountLabel, gbc);
 
         bombCountField = new JTextField("10", 10);
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         frame.add(bombCountField, gbc);
 
         JLabel boardSizeLabel = new JLabel("Board Size (5-16):", JLabel.CENTER);
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 2;
         frame.add(boardSizeLabel, gbc);
 
         boardSizeField = new JTextField("8", 10);
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridwidth = 2;
         frame.add(boardSizeField, gbc);
 
@@ -66,6 +73,7 @@ public class MainMenu {
             public void actionPerformed(ActionEvent e) {
                 boolean isDarkMode = darkModeCheckBox.isSelected();
                 boolean isZenMode = zenModeCheckBox.isSelected();
+                boolean areModifiersEnabled = modifiersCheckBox.isSelected();
                 int bombCount = Integer.parseInt(bombCountField.getText());
                 int boardSize = Integer.parseInt(boardSizeField.getText());
 
@@ -80,11 +88,11 @@ public class MainMenu {
                 }
 
                 frame.dispose();
-                new Minesweeper(isDarkMode, isZenMode, bombCount, boardSize);
+                new Minesweeper(isDarkMode, isZenMode, areModifiersEnabled, bombCount, boardSize);
             }
         });
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.gridwidth = 2;
         frame.add(startButton, gbc);
 
