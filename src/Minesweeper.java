@@ -1,10 +1,11 @@
 import javax.swing.*;
 import javax.swing.Timer;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+/*  CREDIT GOES TO Kenny Yip Coding FOR MINESWEEPER CODE. https://www.youtube.com/watch?v=5VrMVSDjeso&t=747s
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 public class Minesweeper {
     private class MineTile extends JButton {
         int r;
@@ -21,7 +22,7 @@ public class Minesweeper {
     int numCols;
     int boardWidth;
     int boardHeight;
-    
+
     JFrame frame = new JFrame("Minesweeper");
     JLabel textLabel = new JLabel();
     JPanel textPanel = new JPanel();
@@ -53,15 +54,15 @@ public class Minesweeper {
         this.boardHeight = numRows * tileSize;
         this.board = new MineTile[numRows][numCols];
 
-        setupGame();
+        setupGame(); // Initialize game components
         if (isDarkMode) {
-            applyDarkMode();
+            applyDarkMode(); // Apply dark mode theme
         }
         if (!isZenMode) {
-            startTimer();
+            startTimer(); // Start game timer
         }
         if (areModifiersEnabled) {
-            startModifiers();
+            startModifiers(); // Start random modifiers
         }
     }
 
@@ -72,6 +73,7 @@ public class Minesweeper {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
+        // Setup labels and panels
         textLabel.setFont(new Font("Arial", Font.BOLD, 15));
         textLabel.setHorizontalAlignment(JLabel.CENTER);
         textLabel.setText("MineModder: " + mineCount);
@@ -85,7 +87,7 @@ public class Minesweeper {
         scoreLabel.setHorizontalAlignment(JLabel.CENTER);
         scoreLabel.setText("Score: 0");
 
-        textPanel.setLayout(new GridLayout(1, 3)); // Removed the modifier label
+        textPanel.setLayout(new GridLayout(1, 3));
         textPanel.add(textLabel);
         textPanel.add(timerLabel);
         textPanel.add(scoreLabel);
@@ -94,6 +96,7 @@ public class Minesweeper {
         boardPanel.setLayout(new GridLayout(numRows, numCols));
         frame.add(boardPanel, BorderLayout.CENTER);
 
+        // Initialize board tiles
         for (int r = 0; r < numRows; r++) {
             for (int c = 0; c < numCols; c++) {
                 MineTile tile = new MineTile(r, c);
@@ -116,15 +119,15 @@ public class Minesweeper {
                             }
 
                             if (mineList.contains(tile)) {
-                                revealMines();
+                                revealMines(); // Reveal all mines on losing
                             } else {
-                                checkMine(tile.r, tile.c);
+                                checkMine(tile.r, tile.c); // Check clicked tile
                             }
                         } else if (e.getButton() == MouseEvent.BUTTON3) {
                             if (!tile.getText().equals("🚩")) {
-                                tile.setText("🚩");
+                                tile.setText("🚩"); // Place flag
                             } else {
-                                tile.setText("");
+                                tile.setText(""); // Remove flag
                             }
                         }
                     }
@@ -132,7 +135,7 @@ public class Minesweeper {
                 boardPanel.add(tile);
             }
         }
-        generateMines();
+        generateMines(); // Randomly place mines
         frame.setVisible(true);
     }
 
@@ -145,7 +148,7 @@ public class Minesweeper {
             MineTile randomTile = board[r][c];
 
             if (!mineList.contains(randomTile)) {
-                mineList.add(randomTile);
+                mineList.add(randomTile); // Add mine if not already there
             }
         }
     }
@@ -190,14 +193,14 @@ public class Minesweeper {
                 }
             }
         });
-        timer.start();
+        timer.start(); // Start countdown timer
     }
 
     void startModifiers() {
         modifierTimer = new Timer(60000, new ActionListener() { // every 60 seconds
             @Override
             public void actionPerformed(ActionEvent e) {
-                applyRandomModifier();
+                applyRandomModifier(); // Apply random modifier
             }
         });
         modifierTimer.start();
@@ -216,7 +219,7 @@ public class Minesweeper {
         switch (selectedModifier) {
             case "Timer Has Speed Up":
                 if (timer != null) {
-                    timer.setDelay(500); // Speed up timer by making it tick every 0.5 seconds
+                    timer.setDelay(500); // Speed up timer
                 }
                 break;
             case "The wind blows flags away!":
@@ -224,13 +227,13 @@ public class Minesweeper {
                     for (int c = 0; c < numCols; c++) {
                         MineTile tile = board[r][c];
                         if (tile.getText().equals("🚩")) {
-                            tile.setText("");
+                            tile.setText(""); // Remove all flags
                         }
                     }
                 }
                 break;
             case "More Mines Added!":
-                addExtraMines();
+                addExtraMines(); // Add extra mines to the board
                 break;
         }
     }
@@ -274,7 +277,7 @@ public class Minesweeper {
 
     void revealMines() {
         for (MineTile tile : mineList) {
-            tile.setText("💣");
+            tile.setText("💣"); // Reveal all mines
         }
 
         gameOver = true;
@@ -311,17 +314,14 @@ public class Minesweeper {
         minesFound += countMine(r + 1, c + 1);
 
         if (minesFound > 0) {
-            tile.setText(String.valueOf(minesFound));
+            tile.setText(String.valueOf(minesFound)); // Display mine count
         } else {
             tile.setText("");
-
-            checkMine(r - 1, c - 1);
+            checkMine(r - 1, c - 1); //check adjacent tiles
             checkMine(r - 1, c);
             checkMine(r - 1, c + 1);
-
             checkMine(r, c - 1);
             checkMine(r, c + 1);
-
             checkMine(r + 1, c - 1);
             checkMine(r + 1, c);
             checkMine(r + 1, c + 1);
@@ -339,7 +339,7 @@ public class Minesweeper {
             return 0;
         }
         if (mineList.contains(board[r][c])) {
-            return 1;
+            return 1; // Count mine if present
         }
         return 0;
     }
@@ -347,7 +347,7 @@ public class Minesweeper {
     void showEndGamePopup(String message) {
         for (MineTile tile : mineList) {
             if (tile.getText().equals("🚩")) {
-                score += 2000;
+                score += 2000; // Extra points for flagged mines
             }
         }
 
@@ -361,10 +361,10 @@ public class Minesweeper {
                 "Exit");
 
         if (option == JOptionPane.YES_OPTION) {
-            System.exit(0);
+            System.exit(0); // Exit game
         } else {
             frame.dispose();
-            new MainMenu();
+            new MainMenu(); // Return to main menu
         }
     }
 }

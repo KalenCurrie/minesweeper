@@ -19,6 +19,7 @@ public class MainMenu {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
+        // Title label
         JLabel titleLabel = new JLabel("MineModder", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         gbc.gridx = 0;
@@ -26,23 +27,27 @@ public class MainMenu {
         gbc.gridwidth = 2;
         frame.add(titleLabel, gbc);
 
+        // Dark Mode checkbox
         darkModeCheckBox = new JCheckBox("Dark Mode");
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         frame.add(darkModeCheckBox, gbc);
 
+        // Zen Mode checkbox
         zenModeCheckBox = new JCheckBox("Zen Mode");
         gbc.gridx = 1;
         gbc.gridy = 1;
         frame.add(zenModeCheckBox, gbc);
 
+        // Modifiers checkbox
         modifiersCheckBox = new JCheckBox("Enable Modifiers");
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         frame.add(modifiersCheckBox, gbc);
 
+        // Bomb count label and field
         JLabel bombCountLabel = new JLabel("Number of Bombs (3-100):", JLabel.CENTER);
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -55,6 +60,7 @@ public class MainMenu {
         gbc.gridwidth = 2;
         frame.add(bombCountField, gbc);
 
+        // Board size label and field
         JLabel boardSizeLabel = new JLabel("Board Size (5-16):", JLabel.CENTER);
         gbc.gridx = 0;
         gbc.gridy = 5;
@@ -67,6 +73,7 @@ public class MainMenu {
         gbc.gridwidth = 2;
         frame.add(boardSizeField, gbc);
 
+        // Start button with action listener
         JButton startButton = new JButton("Start Game");
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -87,6 +94,7 @@ public class MainMenu {
                     return;
                 }
 
+                // Start the game
                 frame.dispose();
                 new Minesweeper(isDarkMode, isZenMode, areModifiersEnabled, bombCount, boardSize);
             }
