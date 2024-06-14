@@ -205,21 +205,21 @@ public class Minesweeper {
 
     void applyRandomModifier() {
         String[] modifiers = {
-            "Timer Speed Up",
-            "Remove Flags",
-            "Extra Mines"
+            "Timer Has Speed Up",
+            "The wind blows flags away!",
+            "More Mines Added!"
         };
 
         String selectedModifier = modifiers[random.nextInt(modifiers.length)];
         showTemporaryMessage("Modifier: " + selectedModifier, 3000); // Show modifier for 3 seconds
 
         switch (selectedModifier) {
-            case "Timer Speed Up":
+            case "Timer Has Speed Up":
                 if (timer != null) {
                     timer.setDelay(500); // Speed up timer by making it tick every 0.5 seconds
                 }
                 break;
-            case "Remove Flags":
+            case "The wind blows flags away!":
                 for (int r = 0; r < numRows; r++) {
                     for (int c = 0; c < numCols; c++) {
                         MineTile tile = board[r][c];
@@ -229,7 +229,7 @@ public class Minesweeper {
                     }
                 }
                 break;
-            case "Extra Mines":
+            case "More Mines Added!":
                 addExtraMines();
                 break;
         }
